@@ -5,4 +5,4 @@ objs
 
 tw-maps-gen.exe
 tw-maps-gen
-generated/*.png
+generated/*/*
