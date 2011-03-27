@@ -1,29 +1,31 @@
-#include <stdlib.h> //EXIT_SUCCESS, EXIT_FAILURE
-
 #include "map.h"
 
 
 
 int main(int argc, char *argv[])
 {
-	if(argc == 3) //[cwd, map, entities]
+	if(argc != 2 && argc != 3) // cwd, map, (entities)
 	{
-		CMapReader Reader;
-		bool Success = Reader.Open(argv[1]);
-		
-		if(Success)
-		{
+		printf("Invalid parameters. Example : \"tw-maps-gen ctf2 entities\".\n");
+		return 1;
+	}
+	
+	CMapReader Reader;
+	bool Success = Reader.Open(argv[1]);
+	
+	if(Success)
+	{
+		if(argc == 3)
 			Reader.Generate(argv[2]);
-			Reader.Close();
-			return EXIT_SUCCESS;
-		}
 		else
-		{
-			return EXIT_FAILURE;
-		}
+			Reader.Generate("entities");
+		Reader.Close();
 	}
 	else
 	{
-		return EXIT_FAILURE;
+		printf("Can't load map.\n");
+		return 1;
 	}
+	
+	return 0;
 }
