@@ -6,7 +6,6 @@ settings = NewSettings()
 settings.optimize = 1
 settings.debug = 0
 settings.cc.Output = Intermediate_Output
-settings.cc.flags:Add("/EHsc")
 
 zlib = Compile(settings, Collect("src/external/zlib/*.c"))
 settings.cc.includes:Add("src/external/zlib")
