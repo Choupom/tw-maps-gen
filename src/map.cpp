@@ -1,4 +1,5 @@
 #include <stdio.h> //sprintf()
+#include <string.h> //strcpy(), strlen()
 #include <time.h> //time()
 
 #include "system.h"

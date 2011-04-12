@@ -1,3 +1,4 @@
+#include <stdlib.h> //malloc(), free()
 #include <fstream>
 #include <zlib.h>
 
