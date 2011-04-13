@@ -18,7 +18,7 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	
 	bool VFlip = Flags & TILEFLAG_VFLIP;
 	bool HFlip = Flags & TILEFLAG_HFLIP;
-	// TODO: ROTATE tiles
+	bool Rotate = Flags & TILEFLAG_ROTATE;
 	
 	int PX;
 	int PY;
@@ -28,26 +28,19 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	{
 		for(int PixelY = 0; PixelY < 64/ZOOM_OUT; PixelY++)
 		{
-			if(VFlip && HFlip)
+			PX = PixelX*ZOOM_OUT;
+			PY = PixelY*ZOOM_OUT;
+			if(Rotate)
 			{
-				PX = 64-4 - PixelX*ZOOM_OUT;
-				PY = 64-4 - PixelY*ZOOM_OUT;
+				int Temp = PY;
+				PY = 64-ZOOM_OUT - PX;
+				PX = Temp;
 			}
-			else if(VFlip)
-			{
-				PX = 64-4 - PixelX*ZOOM_OUT;
-				PY = PixelY*ZOOM_OUT;
-			}
-			else if(HFlip)
-			{
-				PX = PixelX*ZOOM_OUT;
-				PY = 64-4 - PixelY*ZOOM_OUT;
-			}
-			else
-			{
-				PX = PixelX*ZOOM_OUT;
-				PY = PixelY*ZOOM_OUT;
-			}
+			if(VFlip)
+				PX = 64-ZOOM_OUT - PX;
+			if(HFlip)
+				PY = 64-ZOOM_OUT - PY;
+			
 			m_pTileset->GetPixelZoomOut(IndexX+PX, IndexY+PY, ZOOM_OUT, aColor);
 			SetPixel(PosX+PixelX, PosY+PixelY, aColor);
 		}
