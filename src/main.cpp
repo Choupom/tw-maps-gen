@@ -1,4 +1,4 @@
-#include <string.h> //strcmp()
+#include <string.h> // strcmp()
 #include "map.h"
 
 

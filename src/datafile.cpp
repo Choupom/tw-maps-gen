@@ -1,4 +1,4 @@
-#include <stdlib.h> //malloc(), free()
+#include <stdlib.h> // malloc(), free()
 #include <fstream>
 #include <zlib.h>
 
@@ -120,7 +120,7 @@ void *CDataFileReader::GetData(int Index)
 			m_pDataFile->m_File.read(pCompressedData, DataSize);
 			
 			// decompress the data, TODO: check for errors
-			uncompress((Bytef *)m_pDataFile->m_pData[Index].m_pData, &s, (Bytef *)pCompressedData, DataSize); // ignore_convention
+			uncompress((Bytef *)m_pDataFile->m_pData[Index].m_pData, &s, (Bytef *)pCompressedData, DataSize);
 			
 			// clean up the temporary buffers
 			free(pCompressedData);

@@ -18,7 +18,7 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	
 	bool VFlip = Flags & TILEFLAG_VFLIP;
 	bool HFlip = Flags & TILEFLAG_HFLIP;
-	//TODO: OPAQUE and ROTATE
+	// TODO: ROTATE tiles
 	
 	int PX;
 	int PY;
