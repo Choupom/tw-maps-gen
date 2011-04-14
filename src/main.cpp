@@ -1,10 +1,12 @@
 #include <string.h> // strcmp()
+
+#include "system.h"
 #include "map.h"
 
 
 
-const char *pMap;
-const char *pEntities;
+char *pMap;
+char *pEntities;
 
 
 void PrintHelp()
@@ -51,6 +53,9 @@ bool ParseArguments(int argc, char **argv)
 	
 	if(!pMap)
 		return false;
+	
+	RemoveExtension(pMap);
+	RemoveExtension(pEntities);
 	
 	return true;
 }

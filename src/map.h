@@ -16,8 +16,8 @@ private:
 	bool m_BackgroundFound;
 
 public:
-	bool Open(const char *pMapname);
-	void Generate(const char *pEntities);
+	bool Open(char *pMapname);
+	void Generate(char *pEntities);
 	void Close();
 };
 

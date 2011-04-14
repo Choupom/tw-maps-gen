@@ -1,5 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
+#include <stdlib.h> // malloc(), free()
+#include <string.h> // memcpy()
 
 #include "image.h"
 

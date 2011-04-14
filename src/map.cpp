@@ -1,6 +1,6 @@
-#include <stdio.h> //sprintf()
-#include <string.h> //strcpy(), strlen()
-#include <time.h> //time()
+#include <stdio.h> // sprintf()
+#include <string.h> // strncpy()
+#include <time.h> // time()
 
 #include "system.h"
 #include "mapimages.h"
@@ -9,15 +9,15 @@
 
 
 
-bool CMapReader::Open(const char *pMapname)
+bool CMapReader::Open(char *pMapname)
 {
-	strcpy(m_aMapname, pMapname);
+	strncpy(m_aMapname, pMapname, sizeof(m_aMapname));
 	char aFilename[256];
 	sprintf(aFilename, "maps/%s.map", pMapname);
 	return m_Reader.Open(aFilename);
 }
 
-void CMapReader::Generate(const char *pEntities)
+void CMapReader::Generate(char *pEntities)
 {
 	// create folders
 	
@@ -53,7 +53,7 @@ void CMapReader::Generate(const char *pEntities)
 	sprintf(aBackground, "%s/background", aGeneratedFolder);
 	
 	std::fstream BackgroundFile(aBackground, std::fstream::out);
-	BackgroundFile.write(aDefaultBackground, strlen(aDefaultBackground));
+	BackgroundFile.write(aDefaultBackground, sizeof(aDefaultBackground));
 	BackgroundFile.close();
 	
 	m_BackgroundFound = false;
@@ -126,7 +126,7 @@ void CMapReader::Generate(const char *pEntities)
 				
 				char *pTilesetName;
 				if(GameLayer)
-					pTilesetName = (char *)pEntities;
+					pTilesetName = pEntities;
 				else if(pTilesLayer->m_Image < 0)
 					continue;
 				else
