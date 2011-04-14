@@ -144,7 +144,10 @@ void CMapReader::Generate(const char *pEntities)
 					continue;
 				
 				char aTilemapFilename[512];
-				sprintf(aTilemapFilename, "%s/%d.png", aGeneratedFolder, pTilesLayer->m_Data);
+				if(GameLayer)
+					sprintf(aTilemapFilename, "%s/tiles_game_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
+				else
+					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
 				Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height);
