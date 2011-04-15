@@ -1,5 +1,5 @@
 #include <stdlib.h> // malloc(), free()
-#include <string.h> // memcpy()
+#include <string.h> // memcpy(), memset()
 
 #include "image.h"
 
@@ -30,25 +30,18 @@ unsigned char *CImageRead::GetPixel(int x, int y)
 	return &m_pPixels[Offset];
 }
 
-void CImageRead::GetPixelZoomOut(int PixelX, int PixelY, int ZoomOut, unsigned char *pColor)
+void CImageRead::GetPixelZoomOut(int x, int y, int ZoomOut, unsigned char *pColor)
 {
-	/*unsigned int aTotalColor[4] = {0, 0, 0, 0};
-	for(int x = 0; x < ZoomOut; x++)
+	if(ZoomOut == 1)
 	{
-		for(int y = 0; y < ZoomOut; y++)
-		{
-			unsigned char *pPixel = GetPixel(PixelX + x, PixelY + y);
-			for(int c = 0; c < 4; c++)
-				aTotalColor[c] += pPixel[c];
-		}
+		memcpy(pColor, GetPixel(x, y), 4);
+		return;
 	}
-	for(int c = 0; c < 4; c++)
-		pColor[c] = aTotalColor[c] / (ZoomOut*ZoomOut);*/
 	
-	unsigned char *pPixel1 = GetPixel(PixelX + 0, PixelY + 0);
-	unsigned char *pPixel2 = GetPixel(PixelX + ZoomOut-1, PixelY + 0);
-	unsigned char *pPixel3 = GetPixel(PixelX + 0, PixelY + ZoomOut-1);
-	unsigned char *pPixel4 = GetPixel(PixelX + ZoomOut-1, PixelY + ZoomOut-1);
+	unsigned char *pPixel1 = GetPixel(x + 0, y + 0);
+	unsigned char *pPixel2 = GetPixel(x + ZoomOut-1, y + 0);
+	unsigned char *pPixel3 = GetPixel(x + 0, y + ZoomOut-1);
+	unsigned char *pPixel4 = GetPixel(x + ZoomOut-1, y + ZoomOut-1);
 	for(int c = 0; c < 4; c++)
 		pColor[c] = (pPixel1[c] + pPixel2[c] + pPixel3[c] + pPixel4[c]) / 4;
 }
@@ -72,10 +65,7 @@ bool CImageWrite::Open(const char *pFilename, int Width, int Height)
 		return false;
 	
 	m_pPixels = (unsigned char *)malloc(m_Width*m_Height*4);
-	
-	unsigned char aTransparent[4] = {0, 0, 0, 0};
-	for(int i = 0; i < m_Width*m_Height; i++)
-		memcpy(&m_pPixels[i*4], aTransparent, 4);
+	memset(m_pPixels, 0, m_Width*m_Height*4);
 	
 	return true;
 }

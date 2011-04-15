@@ -16,7 +16,7 @@ private:
 public:
 	bool Open(const char *pFilename);
 	unsigned char *GetPixel(int x, int y);
-	void GetPixelZoomOut(int PixelX, int PixelY, int ZoomOut, unsigned char *pColor);
+	void GetPixelZoomOut(int x, int y, int ZoomOut, unsigned char *pColor);
 	void Close();
 };
 

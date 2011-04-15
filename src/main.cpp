@@ -7,6 +7,7 @@
 
 char *pMap;
 char *pEntities;
+int TileSize;
 
 
 void PrintHelp()
@@ -26,6 +27,7 @@ bool ParseArguments(int argc, char **argv)
 	
 	pMap = 0;
 	pEntities = "entities";
+	TileSize = 16;
 	
 	for(int i = 0; i < argc; i++)
 	{
@@ -37,6 +39,14 @@ bool ParseArguments(int argc, char **argv)
 					return false;
 				else
 					pEntities = argv[i+1];
+				i++;
+			}
+			else if(strcmp(argv[i], "-s") == 0)
+			{
+				if(i+1 >= argc)
+					return false;
+				else
+					TileSize = atoi(argv[i+1]);
 				i++;
 			}
 			else
@@ -52,6 +62,9 @@ bool ParseArguments(int argc, char **argv)
 	}
 	
 	if(!pMap)
+		return false;
+	
+	if(TileSize != 1 && TileSize != 2 && TileSize != 4 && TileSize != 8 && TileSize != 16 && TileSize != 32 && TileSize != 64)
 		return false;
 	
 	RemoveExtension(pMap);
@@ -77,7 +90,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	Reader.Generate(pEntities);
+	Reader.Generate(pEntities, TileSize);
 	
 	Reader.Close();
 	

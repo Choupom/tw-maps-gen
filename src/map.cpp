@@ -17,7 +17,7 @@ bool CMapReader::Open(char *pMapname)
 	return m_Reader.Open(aFilename);
 }
 
-void CMapReader::Generate(char *pEntities)
+void CMapReader::Generate(char *pEntities, int TileSize)
 {
 	// create folders
 	
@@ -150,7 +150,7 @@ void CMapReader::Generate(char *pEntities)
 					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
-				Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height);
+				Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height, TileSize);
 				
 				CTile *pTilesData = (CTile *)m_Reader.GetData(pTilesLayer->m_Data);
 				

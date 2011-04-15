@@ -17,7 +17,7 @@ private:
 
 public:
 	bool Open(char *pMapname);
-	void Generate(char *pEntities);
+	void Generate(char *pEntities, int TileSize);
 	void Close();
 };
 
