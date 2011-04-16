@@ -12,8 +12,8 @@ int TileSize;
 
 void PrintHelp()
 {
-	printf("Use : tw-maps-gen map [-e entities]\n");
-	printf("Example : tw-maps-gen ctf2 -e entities_race\n");
+	printf("Use : tw-maps-gen map [-e entities] [-s tilesize]\n");
+	printf("Example : tw-maps-gen ctf2 -e entities_race -s 32\n");
 }
 
 bool ParseArguments(int argc, char **argv)
