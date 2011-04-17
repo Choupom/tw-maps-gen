@@ -8,7 +8,7 @@
 
 class CImageRead
 {
-private:
+protected:
 	int m_Width;
 	int m_Height;
 	unsigned char *m_pPixels;
@@ -22,7 +22,7 @@ public:
 
 class CImageWrite
 {
-private:
+protected:
 	png_t m_Png;
 	int m_Width;
 	int m_Height;

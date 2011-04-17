@@ -23,5 +23,12 @@ public:
 };
 
 
+class CQuads : public CImageWrite
+{
+public:
+	void DrawGradient(struct CColor *pColors);
+};
+
+
 
 #endif

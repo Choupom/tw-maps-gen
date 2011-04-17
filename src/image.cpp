@@ -65,6 +65,9 @@ bool CImageWrite::Open(const char *pFilename, int Width, int Height)
 		return false;
 	
 	m_pPixels = (unsigned char *)malloc(m_Width*m_Height*4);
+	if(!m_pPixels)
+		return false;
+	
 	memset(m_pPixels, 0, m_Width*m_Height*4);
 	
 	return true;

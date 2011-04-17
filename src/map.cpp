@@ -150,7 +150,9 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
-				Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height, TileSize);
+				Success = Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height, TileSize);
+				if(!Success)
+					continue;
 				
 				CTile *pTilesData = (CTile *)m_Reader.GetData(pTilesLayer->m_Data);
 				
@@ -175,7 +177,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 			{
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
 				
-				if(pQuadsLayer->m_Image == -1 && !m_BackgroundFound) // && pGroup->m_ParallaxX == 0 && pGroup->m_ParallaxY == 0
+				/*if(pQuadsLayer->m_Image == -1 && !m_BackgroundFound) // && pGroup->m_ParallaxX == 0 && pGroup->m_ParallaxY == 0
 				{
 					CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
 					
@@ -197,6 +199,42 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 						
 						break;
 					}
+				}*/
+				
+				if(pQuadsLayer->m_Image != -1) // TODO: fix that
+					continue;
+				
+				char *pImageName = NULL;
+				if(pQuadsLayer->m_Image != -1)
+					pImageName = (char *)m_Reader.GetData(pImages[pQuadsLayer->m_Image].m_ImageName);
+				
+				CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
+				
+				for(int q = 0; q < pQuadsLayer->m_NumQuads; q++)
+				{
+					CQuad *pQuad = &pQuadsData[q];
+					
+					int MinX = min(min(min(pQuad->m_aPoints[0].x, pQuad->m_aPoints[1].x), pQuad->m_aPoints[2].x), pQuad->m_aPoints[3].x) / 1024;
+					int MinY = min(min(min(pQuad->m_aPoints[0].y, pQuad->m_aPoints[1].y), pQuad->m_aPoints[2].y), pQuad->m_aPoints[3].y) / 1024;
+					int MaxX = max(max(max(pQuad->m_aPoints[0].x, pQuad->m_aPoints[1].x), pQuad->m_aPoints[2].x), pQuad->m_aPoints[3].x) / 1024;
+					int MaxY = max(max(max(pQuad->m_aPoints[0].y, pQuad->m_aPoints[1].y), pQuad->m_aPoints[2].y), pQuad->m_aPoints[3].y) / 1024;
+					
+					int Width = MaxX-MinX;
+					int Height = MaxY-MinY;
+					
+					if(Width <= 0 || Height <= 0)
+						continue;
+					
+					char aQuadsFilename[512];
+					sprintf(aQuadsFilename, "%s/quads_%d_%d.png", aGeneratedFolder, pQuadsLayer->m_Data, q);
+					
+					CQuads Dest;
+					bool Success = Dest.Open(aQuadsFilename, Width, Height);
+					if(!Success)
+						continue;
+					
+					Dest.DrawGradient(pQuad->m_aColors);
+					Dest.Save();
 				}
 			}
 		}

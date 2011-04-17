@@ -48,3 +48,22 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 		}
 	}
 }
+
+
+
+void CQuads::DrawGradient(CColor *pColors)
+{
+	unsigned char aColor[4];
+	for(float x = 0; x < m_Width; x++)
+	{
+		for(float y = 0; y < m_Height; y++)
+		{
+			aColor[0] = (pColors[2].r*y/m_Height + pColors[0].r*(1-y/m_Height)) * (x/m_Width) + (pColors[3].r*y/m_Height + pColors[1].r*(1-y/m_Height)) * (1-x/m_Width);
+			aColor[1] = (pColors[2].g*y/m_Height + pColors[0].g*(1-y/m_Height)) * (x/m_Width) + (pColors[3].g*y/m_Height + pColors[1].g*(1-y/m_Height)) * (1-x/m_Width);
+			aColor[2] = (pColors[2].b*y/m_Height + pColors[0].b*(1-y/m_Height)) * (x/m_Width) + (pColors[3].b*y/m_Height + pColors[1].b*(1-y/m_Height)) * (1-x/m_Width);
+			aColor[3] = (pColors[2].a*y/m_Height + pColors[0].a*(1-y/m_Height)) * (x/m_Width) + (pColors[3].a*y/m_Height + pColors[1].a*(1-y/m_Height)) * (1-x/m_Width);
+			// TODO: fix alpha
+			SetPixel(x, y, aColor);
+		}
+	}
+}
