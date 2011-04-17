@@ -6,7 +6,7 @@
 
 
 
-bool CTilemap::Open(const char *pFilename, CTileset *pTileset, int Width, int Height, int TileSize)
+bool CTilemap::Open(const char *pFilename, int Width, int Height, CTileset *pTileset, int TileSize)
 {
 	m_pTileset = pTileset;
 	m_TileSize = TileSize;
@@ -24,7 +24,7 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	bool HFlip = Flags & TILEFLAG_HFLIP;
 	bool Rotate = Flags & TILEFLAG_ROTATE;
 	
-	int ZoomOut = 64/m_TileSize;
+	int Scale = 64/m_TileSize;
 	int PX, PY;
 	unsigned char aColor[4];
 	
@@ -32,26 +32,31 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	{
 		for(int PixelY = 0; PixelY < m_TileSize; PixelY++)
 		{
-			PX = PixelX*ZoomOut;
-			PY = PixelY*ZoomOut;
+			PX = PixelX*Scale;
+			PY = PixelY*Scale;
 			if(Rotate)
 			{
 				int Temp = PY;
-				PY = 64-ZoomOut - PX;
+				PY = 64-Scale - PX;
 				PX = Temp;
 			}
 			if(VFlip)
-				PX = 64-ZoomOut - PX;
+				PX = 64-Scale - PX;
 			if(HFlip)
-				PY = 64-ZoomOut - PY;
+				PY = 64-Scale - PY;
 			
-			m_pTileset->GetPixelZoomOut(IndexX+PX, IndexY+PY, ZoomOut, aColor);
+			m_pTileset->GetPixelScaled(IndexX+PX, IndexY+PY, Scale, aColor);
 			SetPixel(PosX+PixelX, PosY+PixelY, aColor);
 		}
 	}
 }
 
 
+
+bool CQuads::Open(const char *pFilename, int Width, int Height, int TileSize)
+{
+	return CImageWrite::Open(pFilename, Width*(TileSize/64.0f), Height*(TileSize/64.0f));
+}
 
 void CQuads::FillWhite()
 {
@@ -68,7 +73,7 @@ void CQuads::DrawImage(CImageRead *m_pImage)
 	{
 		for(int PixelY = 0; PixelY < m_Height; PixelY++)
 		{
-			m_pImage->GetPixelZoomOut(PixelX*ScaleX, PixelY*ScaleY, (int)min(ScaleX, ScaleY)+1, aColor);
+			m_pImage->GetPixelScaled(PixelX*ScaleX, PixelY*ScaleY, min(ScaleX, ScaleY)+1, aColor);
 			SetPixel(PixelX, PixelY, aColor);
 		}
 	}

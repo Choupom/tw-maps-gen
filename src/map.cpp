@@ -138,7 +138,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
-				Success = Dest.Open(aTilemapFilename, &Src, pTilesLayer->m_Width, pTilesLayer->m_Height, TileSize);
+				Success = Dest.Open(aTilemapFilename, pTilesLayer->m_Width, pTilesLayer->m_Height, &Src, TileSize);
 				if(!Success)
 					continue;
 				
@@ -204,7 +204,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					sprintf(aQuadsFilename, "%s/quads_%d_%d.png", aGeneratedFolder, pQuadsLayer->m_Data, q);
 					
 					CQuads Dest;
-					bool Success = Dest.Open(aQuadsFilename, Width, Height);
+					bool Success = Dest.Open(aQuadsFilename, Width, Height, TileSize);
 					if(!Success)
 						continue;
 					

@@ -18,7 +18,7 @@ private:
 	int m_TileSize;
 
 public:
-	bool Open(const char *pFilename, CTileset *pTileset, int Width, int Height, int TileSize);
+	bool Open(const char *pFilename, int Width, int Height, CTileset *pTileset, int TileSize);
 	void SetTile(int x, int y, int Index, int Flags);
 };
 
@@ -26,6 +26,7 @@ public:
 class CQuads : public CImageWrite
 {
 public:
+	bool Open(const char *pFilename, int Width, int Height, int TileSize);
 	void FillWhite();
 	void DrawImage(CImageRead *m_pImage);
 	void DrawGradient(struct CColor *pColors);
