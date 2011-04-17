@@ -20,6 +20,7 @@ private:
 public:
 	bool Open(const char *pFilename, int Width, int Height, CTileset *pTileset, int TileSize);
 	void SetTile(int x, int y, int Index, int Flags);
+	void Colorize(struct CColor *pColor);
 };
 
 

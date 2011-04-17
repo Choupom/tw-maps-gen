@@ -51,6 +51,25 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 	}
 }
 
+void CTilemap::Colorize(CColor *pColor)
+{
+	unsigned char aColor[4];
+	unsigned char *pPixel;
+	
+	for(int x = 0; x < m_Width; x++)
+	{
+		for(int y = 0; y < m_Height; y++)
+		{
+			pPixel = &m_pPixels[(y*m_Width+x) * 4];
+			aColor[0] = pPixel[0] * pColor->r/255.0f;
+			aColor[1] = pPixel[1] * pColor->g/255.0f;
+			aColor[2] = pPixel[2] * pColor->b/255.0f;
+			aColor[3] = pPixel[3] * pColor->a/255.0f;
+			SetPixel(x, y, aColor);
+		}
+	}
+}
+
 
 
 bool CQuads::Open(const char *pFilename, int Width, int Height, int TileSize)

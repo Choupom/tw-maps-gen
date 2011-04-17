@@ -157,6 +157,8 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					}
 				}
 				
+				Dest.Colorize(&pTilesLayer->m_Color);
+				
 				Dest.Save();
 				Src.Close();
 			}
