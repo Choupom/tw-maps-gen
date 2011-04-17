@@ -47,18 +47,6 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 	GeneratingFile.close();
 	
 	
-	// create background file
-	
-	char aBackground[256];
-	sprintf(aBackground, "%s/background", aGeneratedFolder);
-	
-	std::fstream BackgroundFile(aBackground, std::fstream::out);
-	BackgroundFile.write(aDefaultBackground, sizeof(aDefaultBackground));
-	BackgroundFile.close();
-	
-	m_BackgroundFound = false;
-	
-	
 	// load images
 	
 	int ImagesStart;
@@ -176,30 +164,6 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 			else if(pLayer->m_Type == LAYERTYPE_QUADS)
 			{
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
-				
-				/*if(pQuadsLayer->m_Image == -1 && !m_BackgroundFound) // && pGroup->m_ParallaxX == 0 && pGroup->m_ParallaxY == 0
-				{
-					CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
-					
-					for(int q = 0; q < pQuadsLayer->m_NumQuads; q++)
-					{
-						int Red = (pQuadsData[q].m_aColors[0].r + pQuadsData[q].m_aColors[1].r + pQuadsData[q].m_aColors[2].r + pQuadsData[q].m_aColors[3].r) / 4;
-						int Green = (pQuadsData[q].m_aColors[0].g + pQuadsData[q].m_aColors[1].g + pQuadsData[q].m_aColors[2].g + pQuadsData[q].m_aColors[3].g) / 4;
-						int Blue = (pQuadsData[q].m_aColors[0].b + pQuadsData[q].m_aColors[1].b + pQuadsData[q].m_aColors[2].b + pQuadsData[q].m_aColors[3].b) / 4;
-						int Alpha = (pQuadsData[q].m_aColors[0].a + pQuadsData[q].m_aColors[1].a + pQuadsData[q].m_aColors[2].a + pQuadsData[q].m_aColors[3].a) / 4;
-						
-						char aBg[16];
-						sprintf(aBg, "#%02X%02X%02X", Red, Green, Blue);
-						
-						BackgroundFile.open(aBackground, std::fstream::out);
-						BackgroundFile.write(aBg, strlen(aBg));
-						BackgroundFile.close();
-						
-						m_BackgroundFound = false;
-						
-						break;
-					}
-				}*/
 				
 				if(pQuadsLayer->m_Image != -1) // TODO: fix that
 					continue;
