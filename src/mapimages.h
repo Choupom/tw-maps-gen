@@ -26,6 +26,8 @@ public:
 class CQuads : public CImageWrite
 {
 public:
+	void FillWhite();
+	void DrawImage(CImageRead *m_pImage);
 	void DrawGradient(struct CColor *pColors);
 };
 

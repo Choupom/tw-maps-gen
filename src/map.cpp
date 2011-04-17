@@ -165,12 +165,23 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 			{
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
 				
-				if(pQuadsLayer->m_Image != -1) // TODO: fix that
-					continue;
+				char *pImageName;
+				char aImageFilename[512];
+				CImageRead Src;
 				
-				char *pImageName = NULL;
 				if(pQuadsLayer->m_Image != -1)
+				{
 					pImageName = (char *)m_Reader.GetData(pImages[pQuadsLayer->m_Image].m_ImageName);
+					
+					if(pImages[pQuadsLayer->m_Image].m_External)
+						sprintf(aImageFilename, "mapres/%s.png", pImageName);
+					else
+						sprintf(aImageFilename, "%s/%s.png", aGeneratedMapresFolder, pImageName);
+					
+					bool Success = Src.Open(aImageFilename);
+					if(!Success)
+						continue;
+				}
 				
 				CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
 				
@@ -197,7 +208,13 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					if(!Success)
 						continue;
 					
+					if(pQuadsLayer->m_Image == -1)
+						Dest.FillWhite();
+					else
+						Dest.DrawImage(&Src);
+					
 					Dest.DrawGradient(pQuad->m_aColors);
+					
 					Dest.Save();
 				}
 			}

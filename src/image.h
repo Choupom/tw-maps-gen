@@ -9,11 +9,12 @@
 class CImageRead
 {
 protected:
-	int m_Width;
-	int m_Height;
 	unsigned char *m_pPixels;
 
 public:
+	int m_Width;
+	int m_Height;
+	
 	bool Open(const char *pFilename);
 	unsigned char *GetPixel(int x, int y);
 	void GetPixelZoomOut(int x, int y, int ZoomOut, unsigned char *pColor);
@@ -24,11 +25,12 @@ class CImageWrite
 {
 protected:
 	png_t m_Png;
-	int m_Width;
-	int m_Height;
 	unsigned char *m_pPixels;
 
 public:
+	int m_Width;
+	int m_Height;
+	
 	bool Open(const char *pFilename, int Width, int Height);
 	void SetPixel(int x, int y, unsigned char *pPixel);
 	void SetPixels(unsigned char *pData);

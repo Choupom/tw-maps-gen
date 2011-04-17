@@ -32,6 +32,9 @@ unsigned char *CImageRead::GetPixel(int x, int y)
 
 void CImageRead::GetPixelZoomOut(int x, int y, int ZoomOut, unsigned char *pColor)
 {
+	if(ZoomOut == 0)
+		return;
+	
 	if(ZoomOut == 1)
 	{
 		memcpy(pColor, GetPixel(x, y), 4);
