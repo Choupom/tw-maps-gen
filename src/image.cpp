@@ -32,10 +32,7 @@ unsigned char *CImageRead::GetPixel(int x, int y)
 
 void CImageRead::GetPixelScaled(int x, int y, int Scale, unsigned char *pColor)
 {
-	if(Scale == 0)
-		return;
-	
-	if(Scale == 1)
+	if(Scale <= 1)
 	{
 		memcpy(pColor, GetPixel(x, y), 4);
 		return;

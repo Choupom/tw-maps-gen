@@ -73,7 +73,7 @@ void CQuads::DrawImage(CImageRead *m_pImage)
 	{
 		for(int PixelY = 0; PixelY < m_Height; PixelY++)
 		{
-			m_pImage->GetPixelScaled(PixelX*ScaleX, PixelY*ScaleY, min(ScaleX, ScaleY)+1, aColor);
+			m_pImage->GetPixelScaled(PixelX*ScaleX, PixelY*ScaleY, min(ScaleX, ScaleY), aColor);
 			SetPixel(PixelX, PixelY, aColor);
 		}
 	}
