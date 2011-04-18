@@ -67,8 +67,8 @@ bool ParseArguments(int argc, char **argv)
 	if(TileSize != 1 && TileSize != 2 && TileSize != 4 && TileSize != 8 && TileSize != 16 && TileSize != 32 && TileSize != 64)
 		return false;
 	
-	RemoveExtension(pMap);
-	RemoveExtension(pEntities);
+	RemoveExtension(pMap, ".map");
+	RemoveExtension(pEntities, ".png");
 	
 	return true;
 }
