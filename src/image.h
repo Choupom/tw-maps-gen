@@ -17,7 +17,7 @@ public:
 	
 	bool Open(const char *pFilename);
 	unsigned char *GetPixel(int x, int y);
-	void GetPixelScaled(int x, int y, int Scale, unsigned char *pColor);
+	void GetPixelScaled(int x, int y, int ScaleX, int ScaleY, unsigned char *pColor);
 	void Close();
 };
 

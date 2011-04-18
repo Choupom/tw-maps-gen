@@ -30,18 +30,18 @@ unsigned char *CImageRead::GetPixel(int x, int y)
 	return &m_pPixels[Offset];
 }
 
-void CImageRead::GetPixelScaled(int x, int y, int Scale, unsigned char *pColor)
+void CImageRead::GetPixelScaled(int x, int y, int ScaleX, int ScaleY, unsigned char *pColor)
 {
-	if(Scale <= 1)
+	if(ScaleX == 0 || ScaleY == 0)
 	{
 		memcpy(pColor, GetPixel(x, y), 4);
 		return;
 	}
 	
 	unsigned char *pPixel1 = GetPixel(x + 0, y + 0);
-	unsigned char *pPixel2 = GetPixel(x + Scale-1, y + 0);
-	unsigned char *pPixel3 = GetPixel(x + 0, y + Scale-1);
-	unsigned char *pPixel4 = GetPixel(x + Scale-1, y + Scale-1);
+	unsigned char *pPixel2 = GetPixel(x + ScaleX-1, y + 0);
+	unsigned char *pPixel3 = GetPixel(x + 0, y + ScaleY-1);
+	unsigned char *pPixel4 = GetPixel(x + ScaleX-1, y + ScaleY-1);
 	for(int c = 0; c < 4; c++)
 		pColor[c] = (pPixel1[c] + pPixel2[c] + pPixel3[c] + pPixel4[c]) / 4;
 }

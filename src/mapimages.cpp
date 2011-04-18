@@ -45,7 +45,7 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 			if(HFlip)
 				PY = 64-Scale - PY;
 			
-			m_pTileset->GetPixelScaled(IndexX+PX, IndexY+PY, Scale, aColor);
+			m_pTileset->GetPixelScaled(IndexX+PX, IndexY+PY, Scale, Scale, aColor);
 			SetPixel(PosX+PixelX, PosY+PixelY, aColor);
 		}
 	}
@@ -92,7 +92,7 @@ void CQuads::DrawImage(CImageRead *m_pImage)
 	{
 		for(int PixelY = 0; PixelY < m_Height; PixelY++)
 		{
-			m_pImage->GetPixelScaled(PixelX*ScaleX, PixelY*ScaleY, min(ScaleX, ScaleY), aColor);
+			m_pImage->GetPixelScaled(PixelX*ScaleX, PixelY*ScaleY, ScaleX, ScaleY, aColor);
 			SetPixel(PixelX, PixelY, aColor);
 		}
 	}
