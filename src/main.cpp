@@ -1,3 +1,4 @@
+#include <stdlib.h> // atoi()
 #include <string.h> // strcmp()
 
 #include "system.h"
