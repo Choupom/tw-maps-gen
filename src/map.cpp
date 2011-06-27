@@ -11,18 +11,17 @@
 
 bool CMapReader::Open(char *pMapname)
 {
-	strncpy(m_aMapname, pMapname, sizeof(m_aMapname));
 	char aFilename[256];
 	sprintf(aFilename, "maps/%s.map", pMapname);
 	return m_Reader.Open(aFilename);
 }
 
-void CMapReader::Generate(char *pEntities, int TileSize)
+void CMapReader::Generate(CGenInfo *pInfo)
 {
 	// create folders
 	
 	char aGeneratedFolder[256];
-	sprintf(aGeneratedFolder, "generated/%s", m_aMapname, sizeof(m_aMapname));
+	sprintf(aGeneratedFolder, "generated/%s", pInfo->m_pMap, sizeof(pInfo->m_pMap));
 	
 	char aGeneratedMapresFolder[256];
 	sprintf(aGeneratedMapresFolder, "%s/mapres", aGeneratedFolder);
@@ -114,7 +113,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 				
 				char *pTilesetName;
 				if(GameLayer)
-					pTilesetName = pEntities;
+					pTilesetName = pInfo->m_pEntities;
 				else if(pTilesLayer->m_Image < 0)
 					continue;
 				else
@@ -138,7 +137,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
-				Success = Dest.Open(aTilemapFilename, pTilesLayer->m_Width, pTilesLayer->m_Height, &Src, TileSize);
+				Success = Dest.Open(aTilemapFilename, pTilesLayer->m_Width, pTilesLayer->m_Height, &Src, pInfo->m_TileSize);
 				if(!Success)
 					continue;
 				
@@ -170,6 +169,9 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 				char *pImageName;
 				char aImageFilename[512];
 				CImageRead Src;
+				
+				if(!pInfo->m_DumpQuads)
+					continue;
 				
 				if(pQuadsLayer->m_Image != -1)
 				{
@@ -206,7 +208,7 @@ void CMapReader::Generate(char *pEntities, int TileSize)
 					sprintf(aQuadsFilename, "%s/quads_%d_%d.png", aGeneratedFolder, pQuadsLayer->m_Data, q);
 					
 					CQuads Dest;
-					bool Success = Dest.Open(aQuadsFilename, Width, Height, TileSize);
+					bool Success = Dest.Open(aQuadsFilename, Width, Height, pInfo->m_TileSize);
 					if(!Success)
 						continue;
 					
