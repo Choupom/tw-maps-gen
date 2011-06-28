@@ -2,7 +2,7 @@
 #define DATAFILE_H
 
 
-#include <fstream>
+#include <stdio.h>
 
 
 
@@ -51,7 +51,7 @@ struct CDatafileData
 
 struct CDatafile
 {
-	std::fstream m_File;
+	FILE *m_pFile;
 	CDatafileHeader m_Header;
 	CDatafileInfo m_Info;
 	CDatafileData *m_pData;

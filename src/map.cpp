@@ -42,8 +42,9 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	char aGenerating[256];
 	sprintf(aGenerating, "%s/generating", aGeneratedFolder);
 	
-	std::fstream GeneratingFile(aGenerating, std::fstream::out | std::fstream::binary);
-	GeneratingFile.close();
+	FILE *pGeneratingFile = fopen(aGenerating, "wb");
+	if(pGeneratingFile)
+		fclose(pGeneratingFile);
 	
 	
 	// load images

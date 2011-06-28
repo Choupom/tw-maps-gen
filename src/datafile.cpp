@@ -1,5 +1,5 @@
 #include <stdlib.h> // malloc(), free()
-#include <fstream>
+#include <stdio.h>
 #include <zlib.h>
 
 #include "datafile.h"
@@ -15,9 +15,9 @@ bool CDataFileReader::Open(const char *pFilename)
 {
 	m_pDataFile = new CDatafile();
 	
-	std::fstream *pFile = &m_pDataFile->m_File;
-	pFile->open(pFilename, std::fstream::in | std::fstream::binary);
-	if(pFile->fail())
+	FILE *pFile = fopen(pFilename, "rb");
+	m_pDataFile->m_pFile = pFile;
+	if(!pFile)
 	{
 		delete m_pDataFile;
 		m_pDataFile = NULL;
@@ -25,12 +25,12 @@ bool CDataFileReader::Open(const char *pFilename)
 	}
 	
 	CDatafileHeader *pHeader = &m_pDataFile->m_Header;
-	pFile->read((char*)pHeader, sizeof(CDatafileHeader));
+	fread(pHeader, sizeof(CDatafileHeader), 1, pFile);
 	if(pHeader->m_aId[0] != 'A' || pHeader->m_aId[1] != 'T' || pHeader->m_aId[2] != 'A' || pHeader->m_aId[3] != 'D')
 	{
 		if(pHeader->m_aId[0] != 'D' || pHeader->m_aId[1] != 'A' || pHeader->m_aId[2] != 'T' || pHeader->m_aId[3] != 'A')
 		{
-			m_pDataFile->m_File.close();
+			fclose(pFile);
 			delete m_pDataFile;
 			m_pDataFile = NULL;
 			return false;
@@ -39,7 +39,7 @@ bool CDataFileReader::Open(const char *pFilename)
 	
 	if(pHeader->m_Version != 3 && pHeader->m_Version != 4)
 	{
-		m_pDataFile->m_File.close();
+		fclose(pFile);
 		delete m_pDataFile;
 		m_pDataFile = NULL;
 		return false;
@@ -56,11 +56,11 @@ bool CDataFileReader::Open(const char *pFilename)
 	
 	// read info
 	m_pDataFile->m_Info.m_pData = (char *)malloc(InfoSize);
-	pFile->read(m_pDataFile->m_Info.m_pData, InfoSize);
-	if(pFile->eof())
+	fread(m_pDataFile->m_Info.m_pData, InfoSize, 1, pFile);
+	if(feof(pFile))
 	{
 		free(m_pDataFile->m_Info.m_pData);
-		m_pDataFile->m_File.close();
+		fclose(pFile);
 		delete m_pDataFile;
 		m_pDataFile = NULL;
 		return false;
@@ -116,8 +116,8 @@ void *CDataFileReader::GetData(int Index)
 			m_pDataFile->m_pData[Index].m_pData = (char *)malloc(UncompressedSize);
 			
 			// read the compressed data
-			m_pDataFile->m_File.seekg(m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], std::ios_base::beg);
-			m_pDataFile->m_File.read(pCompressedData, DataSize);
+			fseek(m_pDataFile->m_pFile, m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], SEEK_SET);
+			fread(pCompressedData, DataSize, 1, m_pDataFile->m_pFile);
 			
 			// decompress the data, TODO: check for errors
 			uncompress((Bytef *)m_pDataFile->m_pData[Index].m_pData, &s, (Bytef *)pCompressedData, DataSize);
@@ -129,8 +129,8 @@ void *CDataFileReader::GetData(int Index)
 		{
 			// load the data
 			m_pDataFile->m_pData[Index].m_pData = (char *)malloc(DataSize);
-			m_pDataFile->m_File.seekg(m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], std::ios_base::beg);
-			m_pDataFile->m_File.read(m_pDataFile->m_pData[Index].m_pData, DataSize);
+			fseek(m_pDataFile->m_pFile, m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], SEEK_SET);
+			fread(m_pDataFile->m_pData[Index].m_pData, DataSize, 1, m_pDataFile->m_pFile);
 		}
 		
 		m_pDataFile->m_pData[Index].m_Loaded = true;
@@ -213,7 +213,7 @@ void CDataFileReader::Close()
 	
 	delete m_pDataFile->m_pData;
 	
-	m_pDataFile->m_File.close();
+	fclose(m_pDataFile->m_pFile);
 	delete m_pDataFile;
 	m_pDataFile = NULL;
 }
