@@ -53,19 +53,17 @@ void CTilemap::SetTile(int PosX, int PosY, int Index, int Flags)
 
 void CTilemap::Colorize(CColor *pColor)
 {
-	unsigned char aColor[4];
-	unsigned char *pPixel;
+	unsigned char *pPixel = m_pPixels;
 	
-	for(int x = 0; x < m_Width; x++)
+	for(int y = 0; y < m_Height; y++)
 	{
-		for(int y = 0; y < m_Height; y++)
+		for(int x = 0; x < m_Width; x++)
 		{
-			pPixel = &m_pPixels[(y*m_Width+x) * 4];
-			aColor[0] = pPixel[0] * pColor->r/255.0f;
-			aColor[1] = pPixel[1] * pColor->g/255.0f;
-			aColor[2] = pPixel[2] * pColor->b/255.0f;
-			aColor[3] = pPixel[3] * pColor->a/255.0f;
-			SetPixel(x, y, aColor);
+			pPixel[0] = pPixel[0] * pColor->r/255;
+			pPixel[1] = pPixel[1] * pColor->g/255;
+			pPixel[2] = pPixel[2] * pColor->b/255;
+			pPixel[3] = pPixel[3] * pColor->a/255;
+			pPixel += 4;
 		}
 	}
 }
@@ -102,25 +100,23 @@ void CQuads::DrawGradient(CColor *pColors)
 {
 	float fx, fy;
 	unsigned char Red, Green, Blue, Alpha;
-	unsigned char aColor[4];
-	unsigned char *pPixel;
+	unsigned char *pPixel = m_pPixels;
 	
-	for(int x = 0; x < m_Width; x++)
+	for(int y = 0; y < m_Height; y++)
 	{
-		for(int y = 0; y < m_Height; y++)
+		for(int x = 0; x < m_Width; x++)
 		{
-			pPixel = &m_pPixels[(y*m_Width+x) * 4];
 			fx = (float)x;
 			fy = (float)y;
 			Red = (pColors[2].r*fy/m_Height + pColors[0].r*(1-fy/m_Height)) * (fx/m_Width) + (pColors[3].r*fy/m_Height + pColors[1].r*(1-fy/m_Height)) * (1-fx/m_Width);
 			Green = (pColors[2].g*fy/m_Height + pColors[0].g*(1-fy/m_Height)) * (fx/m_Width) + (pColors[3].g*fy/m_Height + pColors[1].g*(1-fy/m_Height)) * (1-fx/m_Width);
 			Blue = (pColors[2].b*fy/m_Height + pColors[0].b*(1-fy/m_Height)) * (fx/m_Width) + (pColors[3].b*fy/m_Height + pColors[1].b*(1-fy/m_Height)) * (1-fx/m_Width);
 			Alpha = (pColors[2].a*fy/m_Height + pColors[0].a*(1-fy/m_Height)) * (fx/m_Width) + (pColors[3].a*fy/m_Height + pColors[1].a*(1-fy/m_Height)) * (1-fx/m_Width);
-			aColor[0] = pPixel[0] * Red/255.0f;
-			aColor[1] = pPixel[1] * Green/255.0f;
-			aColor[2] = pPixel[2] * Blue/255.0f;
-			aColor[3] = pPixel[3] * Alpha/255.0f;
-			SetPixel(x, y, aColor);
+			pPixel[0] = pPixel[0] * Red/255;
+			pPixel[1] = pPixel[1] * Green/255;
+			pPixel[2] = pPixel[2] * Blue/255;
+			pPixel[3] = pPixel[3] * Alpha/255;
+			pPixel += 4;
 		}
 	}
 }
