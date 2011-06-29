@@ -74,7 +74,7 @@ void CTilemap::Colorize(CColor *pColor)
 
 bool CQuads::Open(const char *pFilename, int Width, int Height, int TileSize)
 {
-	return CImageWrite::Open(pFilename, Width*(TileSize/64.0f), Height*(TileSize/64.0f));
+	return CImageWrite::Open(pFilename, Width*(TileSize/32.0f), Height*(TileSize/32.0f));
 }
 
 void CQuads::FillWhite()
