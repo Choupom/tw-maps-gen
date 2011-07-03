@@ -9,10 +9,10 @@
 
 
 
-bool CMapReader::Open(char *pMapname)
+bool CMapReader::Open(CGenInfo *pInfo)
 {
 	char aFilename[256];
-	sprintf(aFilename, "maps/%s.map", pMapname);
+	sprintf(aFilename, "%smaps/%s.map", pInfo->m_pCurrentDir, pInfo->m_pMap);
 	return m_Reader.Open(aFilename);
 }
 
@@ -21,7 +21,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	// create folders
 	
 	char aGeneratedFolder[256];
-	sprintf(aGeneratedFolder, "generated/%s", pInfo->m_pMap, sizeof(pInfo->m_pMap));
+	sprintf(aGeneratedFolder, "%sgenerated/%s", pInfo->m_pCurrentDir, pInfo->m_pMap);
 	
 	char aGeneratedMapresFolder[256];
 	sprintf(aGeneratedMapresFolder, "%s/mapres", aGeneratedFolder);
@@ -122,7 +122,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				
 				char aTilesetFilename[512];
 				if(GameLayer || pImages[pTilesLayer->m_Image].m_External)
-					sprintf(aTilesetFilename, "mapres/%s.png", pTilesetName);
+					sprintf(aTilesetFilename, "%smapres/%s.png", pInfo->m_pCurrentDir, pTilesetName);
 				else
 					sprintf(aTilesetFilename, "%s/%s.png", aGeneratedMapresFolder, pTilesetName);
 				
@@ -179,7 +179,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 					pImageName = (char *)m_Reader.GetData(pImages[pQuadsLayer->m_Image].m_ImageName);
 					
 					if(pImages[pQuadsLayer->m_Image].m_External)
-						sprintf(aImageFilename, "mapres/%s.png", pImageName);
+						sprintf(aImageFilename, "%smapres/%s.png", pInfo->m_pCurrentDir, pImageName);
 					else
 						sprintf(aImageFilename, "%s/%s.png", aGeneratedMapresFolder, pImageName);
 					

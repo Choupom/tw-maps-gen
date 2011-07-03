@@ -8,6 +8,7 @@
 
 struct CGenInfo
 {
+	char *m_pCurrentDir;
 	char *m_pMap;
 	char *m_pEntities;
 	int m_TileSize;
@@ -21,7 +22,7 @@ private:
 	CDataFileReader m_Reader;
 
 public:
-	bool Open(char *pMapname);
+	bool Open(CGenInfo *pInfo);
 	void Generate(CGenInfo *pInfo);
 	void Close();
 };

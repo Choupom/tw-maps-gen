@@ -20,20 +20,19 @@ bool CheckTileSize(int Size)
 
 bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 {
-	// skip cwd
-	argc--;
-	argv++;
-	
-	if(argc < 1)
+	if(argc < 2)
 		return false;
 	
-	// set default parameters
+	pInfo->m_pCurrentDir = argv[0];
+	ExtractDir(pInfo->m_pCurrentDir);
 	pInfo->m_pMap = 0;
+	
+	// set default parameters
 	pInfo->m_pEntities = "entities";
 	pInfo->m_TileSize = 16;
 	pInfo->m_DumpQuads = false;
 	
-	for(int i = 0; i < argc; i++)
+	for(int i = 1; i < argc; i++)
 	{
 		if(argv[i][0] == '-')
 		{
@@ -92,10 +91,10 @@ int main(int argc, char *argv[])
 	}
 	
 	CMapReader Reader;
-	Success = Reader.Open(Info.m_pMap);
+	Success = Reader.Open(&Info);
 	if(!Success)
 	{
-		printf("Couldn't load map \"%s\"\n", Info.m_pMap);
+		printf("Couldn't load map \"%s\" from \"%smaps/\"\n", Info.m_pMap, Info.m_pCurrentDir);
 		return 1;
 	}
 	

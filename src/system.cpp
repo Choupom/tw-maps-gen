@@ -32,3 +32,15 @@ void RemoveExtension(char *pBuffer, const char *pExtension)
 	if(LastPoint != -1 && strcmp(&pBuffer[LastPoint], pExtension) == 0)
 		pBuffer[LastPoint] = 0;
 }
+
+void ExtractDir(char *pBuffer)
+{
+	int Stop = 0;
+	for(int i = 0; pBuffer[i] != 0; i++)
+	{
+		if(pBuffer[i] == '/' || pBuffer[i] == '\\')
+			Stop = i+1;
+	}
+	
+	pBuffer[Stop] = 0;
+}
