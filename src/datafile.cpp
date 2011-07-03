@@ -126,7 +126,7 @@ void *CDataFileReader::GetData(int Index)
 			// load the data
 			m_pDataFile->m_pData[Index].m_pData = (char *)malloc(DataSize);
 			fseek(m_pDataFile->m_pFile, m_pDataFile->m_DataStartOffset+m_pDataFile->m_Info.m_pDataOffsets[Index], SEEK_SET);
-			(void)fread(m_pDataFile->m_pData[Index].m_pData, 1, DataSize, m_pDataFile->m_pFile);
+			int Bytes = fread(m_pDataFile->m_pData[Index].m_pData, 1, DataSize, m_pDataFile->m_pFile);
 		}
 		
 		m_pDataFile->m_pData[Index].m_Loaded = true;

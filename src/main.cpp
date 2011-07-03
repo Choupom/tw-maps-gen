@@ -28,7 +28,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	pInfo->m_pMap = 0;
 	
 	// set default parameters
-	pInfo->m_pEntities = "entities";
+	pInfo->m_pEntities = (char *)"entities";
 	pInfo->m_TileSize = 16;
 	pInfo->m_DumpQuads = false;
 	
