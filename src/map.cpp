@@ -112,6 +112,9 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				
 				bool GameLayer = (pTilesLayer->m_Flags & TILESLAYERFLAG_GAME) ? true : false;
 				
+				if((GameLayer && !pInfo->m_DumpGameTilemap) || (!GameLayer && !pInfo->m_DumpTilemaps))
+					continue;
+				
 				char *pTilesetName;
 				if(GameLayer)
 					pTilesetName = pInfo->m_pEntities;
@@ -167,12 +170,12 @@ void CMapReader::Generate(CGenInfo *pInfo)
 			{
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
 				
+				if(!pInfo->m_DumpQuads)
+					continue;
+				
 				char *pImageName;
 				char aImageFilename[512];
 				CImageRead Src;
-				
-				if(!pInfo->m_DumpQuads)
-					continue;
 				
 				if(pQuadsLayer->m_Image != -1)
 				{

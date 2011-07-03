@@ -12,6 +12,8 @@ struct CGenInfo
 	char *m_pMap;
 	char *m_pEntities;
 	int m_TileSize;
+	bool m_DumpTilemaps;
+	bool m_DumpGameTilemap;
 	bool m_DumpQuads;
 };
 

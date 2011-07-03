@@ -9,8 +9,8 @@
 
 void PrintHelp()
 {
-	printf("Use : tw-maps-gen map [-q] [-e entities] [-s tilesize]\n");
-	printf("Example : tw-maps-gen ctf2 -q -e entities_race -s 32\n");
+	printf("Use : tw-maps-gen map [-d tgq] [-e entities] [-s tilesize]\n");
+	printf("Example : tw-maps-gen ctf2 -d tg -e entities_race -s 32\n");
 }
 
 bool CheckTileSize(int Size)
@@ -30,31 +30,50 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	// set default parameters
 	pInfo->m_pEntities = (char *)"entities";
 	pInfo->m_TileSize = 16;
-	pInfo->m_DumpQuads = false;
+	pInfo->m_DumpTilemaps = true;
+	pInfo->m_DumpGameTilemap = true;
+	pInfo->m_DumpQuads = true;
 	
 	for(int i = 1; i < argc; i++)
 	{
 		if(argv[i][0] == '-')
 		{
-			if(strcmp(argv[i], "-q") == 0)
+			if(strcmp(argv[i], "-d") == 0)
 			{
-				pInfo->m_DumpQuads = true;
+				i++;
+				if(i >= argc)
+					return false;
+				else
+				{
+					pInfo->m_DumpTilemaps = false;
+					pInfo->m_DumpGameTilemap = false;
+					pInfo->m_DumpQuads = false;
+					for(int j = 0; j < strlen(argv[i]); j++)
+					{
+						if(argv[i][j] == 't')
+							pInfo->m_DumpTilemaps = true;
+						else if(argv[i][j] == 'g')
+							pInfo->m_DumpGameTilemap = true;
+						else if(argv[i][j] == 'q')
+							pInfo->m_DumpQuads = true;
+					}
+				}
 			}
 			else if(strcmp(argv[i], "-e") == 0)
 			{
-				if(i+1 >= argc)
+				i++;
+				if(i >= argc)
 					return false;
 				else
-					pInfo->m_pEntities = argv[i+1];
-				i++;
+					pInfo->m_pEntities = argv[i];
 			}
 			else if(strcmp(argv[i], "-s") == 0)
 			{
-				if(i+1 >= argc)
+				i++;
+				if(i >= argc)
 					return false;
 				else
-					pInfo->m_TileSize = atoi(argv[i+1]);
-				i++;
+					pInfo->m_TileSize = atoi(argv[i]);
 			}
 			else
 				return false;
