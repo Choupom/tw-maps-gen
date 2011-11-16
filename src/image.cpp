@@ -21,6 +21,19 @@ bool CImageRead::Open(const char *pFilename)
 	png_get_data(&Png, m_pPixels);
 	png_close_file(&Png);
 	
+	m_FromBuffer = false;
+	
+	return true;
+}
+
+bool CImageRead::OpenFromBuffer(unsigned char *pData, int Width, int Height)
+{
+	m_pPixels = pData;
+	m_Width = Width;
+	m_Height = Height;
+	
+	m_FromBuffer = true;
+	
 	return true;
 }
 
@@ -48,7 +61,8 @@ void CImageRead::GetPixelScaled(int x, int y, int ScaleX, int ScaleY, unsigned c
 
 void CImageRead::Close()
 {
-	free(m_pPixels);
+	if(!m_FromBuffer)
+		free(m_pPixels);
 }
 
 

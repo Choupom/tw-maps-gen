@@ -115,24 +115,35 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				if((GameLayer && !pInfo->m_DumpGameTilemap) || (!GameLayer && !pInfo->m_DumpTilemaps))
 					continue;
 				
+				if(!GameLayer && pTilesLayer->m_Image < 0)
+					continue;
+				
+				CMapItemImage *pImage = NULL;
+				if(!GameLayer)
+					pImage = &pImages[pTilesLayer->m_Image];
+				
 				char *pTilesetName;
 				if(GameLayer)
 					pTilesetName = pInfo->m_pEntities;
-				else if(pTilesLayer->m_Image < 0)
-					continue;
 				else
-					pTilesetName = (char *)m_Reader.GetData(pImages[pTilesLayer->m_Image].m_ImageName);
-				
-				char aTilesetFilename[512];
-				if(GameLayer || pImages[pTilesLayer->m_Image].m_External)
-					sprintf(aTilesetFilename, "%smapres/%s.png", pInfo->m_pCurrentDir, pTilesetName);
-				else
-					sprintf(aTilesetFilename, "%s/%s.png", aGeneratedMapresFolder, pTilesetName);
+					pTilesetName = (char *)m_Reader.GetData(pImage->m_ImageName);
 				
 				CTileset Src;
-				bool Success = Src.Open(aTilesetFilename);
-				if(!Success)
-					continue;
+				if(GameLayer || pImage->m_External)
+				{
+					char aTilesetFilename[512];
+					sprintf(aTilesetFilename, "%smapres/%s.png", pInfo->m_pCurrentDir, pTilesetName);
+					
+					bool Success = Src.Open(aTilesetFilename);
+					if(!Success)
+						continue;
+				}
+				else
+				{
+					bool Success = Src.OpenFromBuffer((unsigned char *)m_Reader.GetData(pImage->m_ImageData), pImage->m_Width, pImage->m_Height);
+					if(!Success)
+						continue;
+				}
 				
 				char aTilemapFilename[512];
 				if(GameLayer)
@@ -141,7 +152,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 					sprintf(aTilemapFilename, "%s/tiles_%d.png", aGeneratedFolder, pTilesLayer->m_Data);
 				
 				CTilemap Dest;
-				Success = Dest.Open(aTilemapFilename, pTilesLayer->m_Width, pTilesLayer->m_Height, &Src, pInfo->m_TileSize);
+				bool Success = Dest.Open(aTilemapFilename, pTilesLayer->m_Width, pTilesLayer->m_Height, &Src, pInfo->m_TileSize);
 				if(!Success)
 					continue;
 				
@@ -173,22 +184,31 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				if(!pInfo->m_DumpQuads)
 					continue;
 				
-				char *pImageName;
-				char aImageFilename[512];
 				CImageRead Src;
 				
-				if(pQuadsLayer->m_Image != -1)
+				CMapItemImage *pImage = NULL;
+				if(pQuadsLayer->m_Image >= 0)
+					pImage = &pImages[pQuadsLayer->m_Image];
+				
+				if(pQuadsLayer->m_Image >= 0)
 				{
-					pImageName = (char *)m_Reader.GetData(pImages[pQuadsLayer->m_Image].m_ImageName);
+					char *pImageName = (char *)m_Reader.GetData(pImage->m_ImageName);
 					
-					if(pImages[pQuadsLayer->m_Image].m_External)
+					if(pImage->m_External)
+					{
+						char aImageFilename[512];
 						sprintf(aImageFilename, "%smapres/%s.png", pInfo->m_pCurrentDir, pImageName);
+						
+						bool Success = Src.Open(aImageFilename);
+						if(!Success)
+							continue;
+					}
 					else
-						sprintf(aImageFilename, "%s/%s.png", aGeneratedMapresFolder, pImageName);
-					
-					bool Success = Src.Open(aImageFilename);
-					if(!Success)
-						continue;
+					{
+						bool Success = Src.OpenFromBuffer((unsigned char *)m_Reader.GetData(pImage->m_ImageData), pImage->m_Width, pImage->m_Height);
+						if(!Success)
+							continue;
+					}
 				}
 				
 				CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
@@ -216,7 +236,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 					if(!Success)
 						continue;
 					
-					if(pQuadsLayer->m_Image == -1)
+					if(pQuadsLayer->m_Image < 0)
 						Dest.FillWhite();
 					else
 						Dest.DrawImage(&Src);

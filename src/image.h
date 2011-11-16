@@ -10,12 +10,14 @@ class CImageRead
 {
 protected:
 	unsigned char *m_pPixels;
+	bool m_FromBuffer;
 
 public:
 	int m_Width;
 	int m_Height;
 	
 	bool Open(const char *pFilename);
+	bool OpenFromBuffer(unsigned char *pData, int Width, int Height);
 	unsigned char *GetPixel(int x, int y);
 	void GetPixelScaled(int x, int y, int ScaleX, int ScaleY, unsigned char *pColor);
 	void Close();
