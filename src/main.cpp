@@ -33,6 +33,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	pInfo->m_DumpTilemaps = true;
 	pInfo->m_DumpGameTilemap = true;
 	pInfo->m_DumpQuads = true;
+	pInfo->m_DumpEmbedded = true;
 	
 	for(int i = 1; i < argc; i++)
 	{
@@ -48,6 +49,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 					pInfo->m_DumpTilemaps = false;
 					pInfo->m_DumpGameTilemap = false;
 					pInfo->m_DumpQuads = false;
+					pInfo->m_DumpEmbedded = false;
 					for(int j = 0; j < strlen(argv[i]); j++)
 					{
 						if(argv[i][j] == 't')
@@ -56,6 +58,8 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 							pInfo->m_DumpGameTilemap = true;
 						else if(argv[i][j] == 'q')
 							pInfo->m_DumpQuads = true;
+						else if(argv[i][j] == 'e')
+							pInfo->m_DumpEmbedded = true;
 					}
 				}
 			}

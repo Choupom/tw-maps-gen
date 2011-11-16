@@ -15,6 +15,7 @@ struct CGenInfo
 	bool m_DumpTilemaps;
 	bool m_DumpGameTilemap;
 	bool m_DumpQuads;
+	bool m_DumpEmbedded;
 };
 
 

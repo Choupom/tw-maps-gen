@@ -63,7 +63,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 		{
 			CMapItemImage *pImage = (CMapItemImage *)m_Reader.GetItem(i, NULL, NULL);
 			
-			if(!pImage->m_External)
+			if(!pImage->m_External && pInfo->m_DumpEmbedded)
 			{
 				char *pName = (char *)m_Reader.GetData(pImage->m_ImageName);
 				unsigned char *pData = (unsigned char *)m_Reader.GetData(pImage->m_ImageData);
