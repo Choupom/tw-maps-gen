@@ -9,7 +9,7 @@
 
 void PrintHelp()
 {
-	printf("Use : tw-maps-gen map [-d tgq] [-e entities] [-s tilesize]\n");
+	printf("Use : tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize]\n");
 	printf("Example : tw-maps-gen ctf2 -d tg -e entities_race -s 32\n");
 }
 
@@ -34,6 +34,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	pInfo->m_DumpGameTilemap = true;
 	pInfo->m_DumpQuads = true;
 	pInfo->m_DumpEmbedded = true;
+	pInfo->m_DumpMetadata = true;
 	
 	for(int i = 1; i < argc; i++)
 	{
@@ -50,6 +51,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 					pInfo->m_DumpGameTilemap = false;
 					pInfo->m_DumpQuads = false;
 					pInfo->m_DumpEmbedded = false;
+					pInfo->m_DumpMetadata = false;
 					for(int j = 0; j < strlen(argv[i]); j++)
 					{
 						if(argv[i][j] == 't')
@@ -60,6 +62,8 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 							pInfo->m_DumpQuads = true;
 						else if(argv[i][j] == 'e')
 							pInfo->m_DumpEmbedded = true;
+						else if(argv[i][j] == 'm')
+							pInfo->m_DumpMetadata = true;
 					}
 				}
 			}

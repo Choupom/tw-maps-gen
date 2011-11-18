@@ -5,6 +5,7 @@
 #include "system.h"
 #include "mapimages.h"
 #include "mapitems.h"
+#include "xml.h"
 #include "map.h"
 
 
@@ -247,6 +248,206 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				}
 			}
 		}
+	}
+	
+	if(pInfo->m_DumpMetadata)
+	{
+		CXMLDocument Doc;
+		CXMLItem *pMainItem = Doc.Open("map");
+		pMainItem->AddAttributeInt("version", pVersion->m_Version);
+		
+		for(int i = 0; i < ImagesNum; i++)
+		{
+			char *pName = (char *)m_Reader.GetData(pImages[i].m_ImageName);
+
+			CXMLItem *pImageItem = pMainItem->AddChild("image");
+			pImageItem->AddAttributeInt("version", pImages[i].m_Version);
+			pImageItem->AddAttributeInt("width", pImages[i].m_Width);
+			pImageItem->AddAttributeInt("height", pImages[i].m_Height);
+			pImageItem->AddAttributeBool("external", pImages[i].m_External);
+			pImageItem->AddAttributeStr("name", pName);
+		}
+		
+		for(int g = GroupsStart; g < GroupsStart+GroupsNum; g++)
+		{
+			CMapItemGroup *pGroup = (CMapItemGroup *)m_Reader.GetItem(g, NULL, NULL);
+			
+			CXMLItem *pGroupItem = pMainItem->AddChild("group");
+			pGroupItem->AddAttributeInt("version", pGroup->m_Version);
+			pGroupItem->AddAttributeInt("offset_x", pGroup->m_OffsetX);
+			pGroupItem->AddAttributeInt("offset_y", pGroup->m_OffsetY);
+			pGroupItem->AddAttributeInt("parallax_x", pGroup->m_ParallaxX);
+			pGroupItem->AddAttributeInt("parallax_y", pGroup->m_ParallaxY);
+			if(pGroup->m_Version >= 2)
+			{
+				pGroupItem->AddAttributeBool("use_clipping", pGroup->m_UseClipping);
+				pGroupItem->AddAttributeInt("clip_x", pGroup->m_ClipX);
+				pGroupItem->AddAttributeInt("clip_y", pGroup->m_ClipY);
+				pGroupItem->AddAttributeInt("clip_w", pGroup->m_ClipW);
+				pGroupItem->AddAttributeInt("clip_h", pGroup->m_ClipH);
+			}
+			
+			for(int l = LayersStart + pGroup->m_StartLayer; l < LayersStart + pGroup->m_StartLayer+pGroup->m_NumLayers; l++)
+			{
+				if(l >= LayersStart+LayersNum)
+					break;
+				
+				CMapItemLayer *pLayer = (CMapItemLayer *)m_Reader.GetItem(l, NULL, NULL);
+				
+				CXMLItem *pLayerItem = pGroupItem->AddChild("layer");
+				if(pLayer->m_Type == LAYERTYPE_TILES)
+					pLayerItem->AddAttributeStr("type", "tiles");
+				else if(pLayer->m_Type == LAYERTYPE_QUADS)
+					pLayerItem->AddAttributeStr("type", "quads");
+				else
+					pLayerItem->AddAttributeStr("type", "invalid");
+				pLayerItem->AddAttributeBool("detail", pLayer->m_Flags&TILESLAYERFLAG_GAME);
+				
+				if(pLayer->m_Type == LAYERTYPE_TILES)
+				{
+					CMapItemLayerTilemap *pTilesLayer = (CMapItemLayerTilemap *)pLayer;
+					
+					char *pImageName = "";
+					if(pTilesLayer->m_Image >= 0 && pTilesLayer->m_Image < ImagesNum)
+						pImageName = (char *)m_Reader.GetData(pImages[pTilesLayer->m_Image].m_ImageName);
+					
+					pLayerItem->AddAttributeInt("version", pTilesLayer->m_Version);
+					pLayerItem->AddAttributeInt("width", pTilesLayer->m_Width);
+					pLayerItem->AddAttributeInt("height", pTilesLayer->m_Height);
+					pLayerItem->AddAttributeBool("game", pTilesLayer->m_Flags&TILESLAYERFLAG_GAME);
+					pLayerItem->AddAttributeInt("color_env", pTilesLayer->m_ColorEnv);
+					pLayerItem->AddAttributeInt("color_env_offset", pTilesLayer->m_ColorEnvOffset);
+					pLayerItem->AddAttributeStr("image", pImageName);
+					pLayerItem->AddAttributeInt("data", pTilesLayer->m_Data);
+					
+					CXMLItem *pColorItem = pLayerItem->AddChild("color");
+					pColorItem->AddAttributeInt("r", pTilesLayer->m_Color.r);
+					pColorItem->AddAttributeInt("g", pTilesLayer->m_Color.g);
+					pColorItem->AddAttributeInt("b", pTilesLayer->m_Color.b);
+					pColorItem->AddAttributeInt("a", pTilesLayer->m_Color.a);
+				}
+				else if(pLayer->m_Type == LAYERTYPE_QUADS)
+				{
+					CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
+					
+					char *pImageName = "";
+					if(pQuadsLayer->m_Image >= 0 && pQuadsLayer->m_Image < ImagesNum)
+						pImageName = (char *)m_Reader.GetData(pImages[pQuadsLayer->m_Image].m_ImageName);
+					
+					pLayerItem->AddAttributeInt("version", pQuadsLayer->m_Version);
+					pLayerItem->AddAttributeStr("image", pImageName);
+					pLayerItem->AddAttributeInt("data", pQuadsLayer->m_Data);
+					
+					CQuad *pQuadsData = (CQuad *)m_Reader.GetData(pQuadsLayer->m_Data);
+					
+					for(int q = 0; q < pQuadsLayer->m_NumQuads; q++)
+					{
+						CQuad *pQuad = &pQuadsData[q];
+						
+						CXMLItem *pQuadItem = pLayerItem->AddChild("quad");
+						pQuadItem->AddAttributeInt("pos_env", pQuad->m_PosEnv);
+						pQuadItem->AddAttributeInt("pos_env_offset", pQuad->m_PosEnvOffset);
+						pQuadItem->AddAttributeInt("color_env", pQuad->m_ColorEnv);
+						pQuadItem->AddAttributeInt("color_env_offset", pQuad->m_ColorEnvOffset);
+						pQuadItem->AddAttributeInt("data", q);
+						
+						for(int k = 0; k < 5; k++)
+						{
+							CXMLItem *pPointItem = pQuadItem->AddChild("point");
+							pPointItem->AddAttributeInt("x", fx2f(pQuad->m_aPoints[k].x));
+							pPointItem->AddAttributeInt("y", fx2f(pQuad->m_aPoints[k].y));
+						}
+						
+						for(int k = 0; k < 4; k++)
+						{
+							CXMLItem *pColorItem = pQuadItem->AddChild("color");
+							pColorItem->AddAttributeInt("r", pQuad->m_aColors[k].r);
+							pColorItem->AddAttributeInt("g", pQuad->m_aColors[k].g);
+							pColorItem->AddAttributeInt("b", pQuad->m_aColors[k].b);
+							pColorItem->AddAttributeInt("a", pQuad->m_aColors[k].a);
+						}
+						
+						for(int k = 0; k < 4; k++)
+						{
+							CXMLItem *pTexcoordItem = pQuadItem->AddChild("texcoord");
+							pTexcoordItem->AddAttributeInt("x", fx2f(pQuad->m_aTexcoords[k].x));
+							pTexcoordItem->AddAttributeInt("y", fx2f(pQuad->m_aTexcoords[k].y));
+						}
+					}
+				}
+			}
+		}
+		
+		int EnvPointsStart;
+		int EnvPointsNum;
+		m_Reader.GetType(MAPITEMTYPE_ENVPOINTS, &EnvPointsStart, &EnvPointsNum);
+		
+		CEnvPoint *pPoints = 0;
+		if(EnvPointsNum)
+			pPoints = (CEnvPoint *)m_Reader.GetItem(EnvPointsStart, NULL, NULL);
+		
+		int EnvStart;
+		int EnvNum;
+		m_Reader.GetType(MAPITEMTYPE_ENVELOPE, &EnvStart, &EnvNum);
+		
+		for(int e = EnvStart; e < EnvStart+EnvNum; e++)
+		{
+			CMapItemEnvelope *pEnv = (CMapItemEnvelope *)m_Reader.GetItem(e, NULL, NULL);
+			
+			CXMLItem *pEnvItem = pMainItem->AddChild("envelope");
+			pEnvItem->AddAttributeInt("version", pEnv->m_Version);
+			if(pEnv->m_Channels == 3)
+				pEnvItem->AddAttributeStr("type", "pos");
+			else if(pEnv->m_Channels == 4)
+				pEnvItem->AddAttributeStr("type", "color");
+			else
+				pEnvItem->AddAttributeStr("type", "invalid");
+			if(pEnv->m_aName[0] != -1)
+			{
+				char aEnvName[64];
+				IntsToStr(pEnv->m_aName, sizeof(pEnv->m_aName)/sizeof(int), aEnvName);
+				pEnvItem->AddAttributeStr("name", aEnvName);
+			}
+			
+			for(int p = pEnv->m_StartPoint; p < pEnv->m_StartPoint+pEnv->m_NumPoints; p++)
+			{
+				CXMLItem *pEnvPointItem = pEnvItem->AddChild("envpoint");
+				pEnvPointItem->AddAttributeInt("time", pPoints[p].m_Time);
+				if(p != pEnv->m_StartPoint+pEnv->m_NumPoints -1)
+				{
+					if(pPoints[p].m_Curvetype == CURVETYPE_STEP)
+						pEnvPointItem->AddAttributeStr("curvetype", "step");
+					else if(pPoints[p].m_Curvetype == CURVETYPE_LINEAR)
+						pEnvPointItem->AddAttributeStr("curvetype", "linear");
+					else if(pPoints[p].m_Curvetype == CURVETYPE_SLOW)
+						pEnvPointItem->AddAttributeStr("curvetype", "slow");
+					else if(pPoints[p].m_Curvetype == CURVETYPE_FAST)
+						pEnvPointItem->AddAttributeStr("curvetype", "fast");
+					else if(pPoints[p].m_Curvetype == CURVETYPE_SMOOTH)
+						pEnvPointItem->AddAttributeStr("curvetype", "smooth");
+					else
+						pEnvPointItem->AddAttributeStr("curvetype", "invalid");
+				}
+				if(pEnv->m_Channels == 3)
+				{
+					pEnvPointItem->AddAttributeInt("x", fx2f(pPoints[p].m_aValues[0]));
+					pEnvPointItem->AddAttributeInt("y", fx2f(pPoints[p].m_aValues[1]));
+					pEnvPointItem->AddAttributeInt("r", fx2f(pPoints[p].m_aValues[2]));
+				}
+				else if(pEnv->m_Channels == 4)
+				{
+					pEnvPointItem->AddAttributeInt("r", fx2f(pPoints[p].m_aValues[0])*255);
+					pEnvPointItem->AddAttributeInt("g", fx2f(pPoints[p].m_aValues[1])*255);
+					pEnvPointItem->AddAttributeInt("b", fx2f(pPoints[p].m_aValues[2])*255);
+					pEnvPointItem->AddAttributeInt("a", fx2f(pPoints[p].m_aValues[3])*255);
+				}
+			}
+		}
+		
+		char aMetadataFilename[512];
+		sprintf(aMetadataFilename, "%s/metadata.xml", aGeneratedFolder);
+		Doc.Save(aMetadataFilename);
+		Doc.Close();
 	}
 	
 	if(ImagesNum > 0)
