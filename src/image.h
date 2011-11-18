@@ -1,9 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-
 #include <pnglite.h>
-
 
 
 class CImageRead
@@ -38,7 +36,6 @@ public:
 	void SetPixels(unsigned char *pData);
 	void Save();
 };
-
 
 
 #endif

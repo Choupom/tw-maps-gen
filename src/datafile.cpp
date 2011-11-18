@@ -6,7 +6,6 @@
 #include "datafile.h"
 
 
-
 CDataFileReader::CDataFileReader()
 {
 	m_pDataFile = NULL;

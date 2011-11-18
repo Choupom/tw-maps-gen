@@ -1,15 +1,12 @@
 #ifndef MAPIMAGES_H
 #define MAPIMAGES_H
 
-
 #include "image.h"
-
 
 
 class CTileset : public CImageRead
 {
 };
-
 
 class CTilemap : public CImageWrite
 {
@@ -23,7 +20,6 @@ public:
 	void Colorize(struct CColor *pColor);
 };
 
-
 class CQuads : public CImageWrite
 {
 public:
@@ -32,7 +28,6 @@ public:
 	void DrawImage(CImageRead *m_pImage);
 	void DrawGradient(struct CColor *pColors);
 };
-
 
 
 #endif

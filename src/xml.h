@@ -2,7 +2,6 @@
 #define XML_H
 
 
-
 enum XML_ATTRIBUTE_TYPES
 {
 	XML_ATTRIBUTE_TYPE_INT=1,
@@ -68,7 +67,6 @@ public:
 	void Save(char *pFilename);
 	void Close();
 };
-
 
 
 #endif

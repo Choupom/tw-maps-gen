@@ -4,7 +4,6 @@
 #include "image.h"
 
 
-
 bool CImageRead::Open(const char *pFilename)
 {
 	png_init(NULL, NULL);

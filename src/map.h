@@ -1,10 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
-
 #include "benchmark.h"
 #include "datafile.h"
-
 
 
 inline float fx2f(int v) { return v*(1.0f/(1<<10)); }
@@ -39,28 +37,22 @@ struct CGenInfo
 	bool m_DumpMetadata;
 };
 
-struct CBenchmarkResults
-{
-	CBenchmark m_ImagesDumping;
-	CBenchmark m_TilemapsDumping;
-	CBenchmark m_QuadsDumping;
-	CBenchmark m_MetadataDumping;
-	CBenchmark m_Overall;
-};
-
 
 class CMapReader
 {
 private:
 	CDataFileReader m_Reader;
-	CBenchmarkResults m_Benchmark;
+	CBenchmark m_ImagesBenchmark;
+	CBenchmark m_TilemapsBenchmark;
+	CBenchmark m_QuadsBenchmark;
+	CBenchmark m_MetadataBenchmark;
+	CBenchmark m_OverallBenchmark;
 
 public:
 	bool Open(CGenInfo *pInfo);
 	void Generate(CGenInfo *pInfo);
 	void Close();
 };
-
 
 
 #endif

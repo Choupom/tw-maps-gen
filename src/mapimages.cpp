@@ -5,7 +5,6 @@
 #include "mapitems.h"
 
 
-
 bool CTilemap::Open(const char *pFilename, int Width, int Height, CTileset *pTileset, int TileSize)
 {
 	m_pTileset = pTileset;

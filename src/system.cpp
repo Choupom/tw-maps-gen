@@ -10,7 +10,6 @@
 #endif
 
 
-
 void MakeDir(const char *pPath)
 {
 #if defined(CONF_FAMILY_WINDOWS)

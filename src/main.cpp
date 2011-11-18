@@ -6,7 +6,6 @@
 #include "map.h"
 
 
-
 void PrintHelp()
 {
 	printf("Use : tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize] [-b]\n");

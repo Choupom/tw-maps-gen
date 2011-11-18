@@ -1,9 +1,7 @@
 #ifndef DATAFILE_H
 #define DATAFILE_H
 
-
 #include <stdio.h>
-
 
 
 struct CDatafileItemType
@@ -59,7 +57,6 @@ struct CDatafile
 };
 
 
-
 class CDataFileReader
 {
 private:
@@ -81,7 +78,6 @@ public:
 	int NumItems();
 	int NumData();
 };
-
 
 
 #endif

@@ -5,7 +5,6 @@
 #include "xml.h"
 
 
-
 CXMLAttribute::CXMLAttribute()
 {
 	m_pNextAttribute = 0;

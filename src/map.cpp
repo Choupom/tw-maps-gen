@@ -8,7 +8,6 @@
 #include "map.h"
 
 
-
 bool CMapReader::Open(CGenInfo *pInfo)
 {
 	char aFilename[256];
@@ -18,8 +17,7 @@ bool CMapReader::Open(CGenInfo *pInfo)
 
 void CMapReader::Generate(CGenInfo *pInfo)
 {
-	m_Benchmark.m_Overall.Unpause();
-	
+	m_OverallBenchmark.Unpause();
 	
 	// create folders
 	
@@ -32,13 +30,11 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	MakeDir(aGeneratedFolder);
 	MakeDir(aGeneratedMapresFolder);
 	
-	
 	// check map version
 	
 	CMapItemVersion *pVersion = (CMapItemVersion *)m_Reader.FindItem(MAPITEMTYPE_VERSION, 0);
 	if(!pVersion || pVersion->m_Version != 1)
 		return;
-	
 	
 	// create generating file
 	
@@ -49,9 +45,8 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	if(pGeneratingFile)
 		fclose(pGeneratingFile);
 	
-	
 	// load images
-	m_Benchmark.m_ImagesDumping.Unpause();
+	m_ImagesBenchmark.Unpause();
 	
 	int ImagesStart;
 	int ImagesNum;
@@ -85,8 +80,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 		}
 	}
 	
-	m_Benchmark.m_ImagesDumping.Pause();
-	
+	m_ImagesBenchmark.Pause();
 	
 	// load groups and layers
 	
@@ -114,7 +108,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 			
 			if(pLayer->m_Type == LAYERTYPE_TILES)
 			{
-				m_Benchmark.m_TilemapsDumping.Unpause();
+				m_TilemapsBenchmark.Unpause();
 				
 				CMapItemLayerTilemap *pTilesLayer = (CMapItemLayerTilemap *)pLayer;
 				
@@ -184,12 +178,12 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				Dest.Save();
 				Src.Close();
 				
-				m_Benchmark.m_TilemapsDumping.Pause();
+				m_TilemapsBenchmark.Pause();
 			}
 			
 			else if(pLayer->m_Type == LAYERTYPE_QUADS)
 			{
-				m_Benchmark.m_QuadsDumping.Unpause();
+				m_QuadsBenchmark.Unpause();
 				
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
 				
@@ -258,14 +252,16 @@ void CMapReader::Generate(CGenInfo *pInfo)
 					Dest.Save();
 				}
 				
-				m_Benchmark.m_QuadsDumping.Pause();
+				m_QuadsBenchmark.Pause();
 			}
 		}
 	}
 	
+	// dump metadata
+
 	if(pInfo->m_DumpMetadata)
 	{
-		m_Benchmark.m_MetadataDumping.Unpause();
+		m_MetadataBenchmark.Unpause();
 		
 		CXMLDocument Doc;
 		CXMLItem *pMainItem = Doc.Open("map");
@@ -464,7 +460,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 		Doc.Save(aMetadataFilename);
 		Doc.Close();
 		
-		m_Benchmark.m_MetadataDumping.Pause();
+		m_MetadataBenchmark.Pause();
 	}
 	
 	if(ImagesNum > 0)
@@ -472,19 +468,18 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	
 	remove(aGenerating);
 	
-	m_Benchmark.m_Overall.Pause();
+	m_OverallBenchmark.Pause();
 	
 	if(pInfo->m_ShowBenchmark)
 	{
 		printf("Benchmark results:\n");
-		printf("  Images dumping:\t%dms\n", m_Benchmark.m_ImagesDumping.GetTime());
-		printf("  Tilemaps dumping:\t%dms\n", m_Benchmark.m_TilemapsDumping.GetTime());
-		printf("  Quads dumping:\t%dms\n", m_Benchmark.m_QuadsDumping.GetTime());
-		printf("  Metadata dumping:\t%dms\n", m_Benchmark.m_MetadataDumping.GetTime());
-		printf("  Overall:\t\t%dms\n", m_Benchmark.m_Overall.GetTime());
+		printf("  Images dumping:\t%dms\n", m_ImagesBenchmark.GetTime());
+		printf("  Tilemaps dumping:\t%dms\n", m_TilemapsBenchmark.GetTime());
+		printf("  Quads dumping:\t%dms\n", m_QuadsBenchmark.GetTime());
+		printf("  Metadata dumping:\t%dms\n", m_MetadataBenchmark.GetTime());
+		printf("  Overall:\t\t%dms\n", m_OverallBenchmark.GetTime());
 	}
 }
-
 
 void CMapReader::Close()
 {
