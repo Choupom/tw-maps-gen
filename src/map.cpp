@@ -1,6 +1,5 @@
 #include <stdio.h> // sprintf()
 #include <string.h> // strncpy()
-#include <time.h> // time()
 
 #include "system.h"
 #include "mapimages.h"
@@ -19,6 +18,9 @@ bool CMapReader::Open(CGenInfo *pInfo)
 
 void CMapReader::Generate(CGenInfo *pInfo)
 {
+	m_Benchmark.m_Overall.Unpause();
+	
+	
 	// create folders
 	
 	char aGeneratedFolder[256];
@@ -49,6 +51,7 @@ void CMapReader::Generate(CGenInfo *pInfo)
 	
 	
 	// load images
+	m_Benchmark.m_ImagesDumping.Unpause();
 	
 	int ImagesStart;
 	int ImagesNum;
@@ -82,6 +85,8 @@ void CMapReader::Generate(CGenInfo *pInfo)
 		}
 	}
 	
+	m_Benchmark.m_ImagesDumping.Pause();
+	
 	
 	// load groups and layers
 	
@@ -109,6 +114,8 @@ void CMapReader::Generate(CGenInfo *pInfo)
 			
 			if(pLayer->m_Type == LAYERTYPE_TILES)
 			{
+				m_Benchmark.m_TilemapsDumping.Unpause();
+				
 				CMapItemLayerTilemap *pTilesLayer = (CMapItemLayerTilemap *)pLayer;
 				
 				bool GameLayer = (pTilesLayer->m_Flags & TILESLAYERFLAG_GAME) ? true : false;
@@ -176,10 +183,14 @@ void CMapReader::Generate(CGenInfo *pInfo)
 				
 				Dest.Save();
 				Src.Close();
+				
+				m_Benchmark.m_TilemapsDumping.Pause();
 			}
 			
 			else if(pLayer->m_Type == LAYERTYPE_QUADS)
 			{
+				m_Benchmark.m_QuadsDumping.Unpause();
+				
 				CMapItemLayerQuads *pQuadsLayer = (CMapItemLayerQuads *)pLayer;
 				
 				if(!pInfo->m_DumpQuads)
@@ -246,12 +257,16 @@ void CMapReader::Generate(CGenInfo *pInfo)
 					
 					Dest.Save();
 				}
+				
+				m_Benchmark.m_QuadsDumping.Pause();
 			}
 		}
 	}
 	
 	if(pInfo->m_DumpMetadata)
 	{
+		m_Benchmark.m_MetadataDumping.Unpause();
+		
 		CXMLDocument Doc;
 		CXMLItem *pMainItem = Doc.Open("map");
 		pMainItem->AddAttributeInt("version", pVersion->m_Version);
@@ -448,12 +463,26 @@ void CMapReader::Generate(CGenInfo *pInfo)
 		sprintf(aMetadataFilename, "%s/metadata.xml", aGeneratedFolder);
 		Doc.Save(aMetadataFilename);
 		Doc.Close();
+		
+		m_Benchmark.m_MetadataDumping.Pause();
 	}
 	
 	if(ImagesNum > 0)
 		delete pImages;
 	
 	remove(aGenerating);
+	
+	m_Benchmark.m_Overall.Pause();
+	
+	if(pInfo->m_ShowBenchmark)
+	{
+		printf("Benchmark results:\n");
+		printf("  Images dumping:\t%dms\n", m_Benchmark.m_ImagesDumping.GetTime());
+		printf("  Tilemaps dumping:\t%dms\n", m_Benchmark.m_TilemapsDumping.GetTime());
+		printf("  Quads dumping:\t%dms\n", m_Benchmark.m_QuadsDumping.GetTime());
+		printf("  Metadata dumping:\t%dms\n", m_Benchmark.m_MetadataDumping.GetTime());
+		printf("  Overall:\t\t%dms\n", m_Benchmark.m_Overall.GetTime());
+	}
 }
 
 

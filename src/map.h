@@ -2,6 +2,7 @@
 #define MAP_H
 
 
+#include "benchmark.h"
 #include "datafile.h"
 
 
@@ -30,6 +31,7 @@ struct CGenInfo
 	char *m_pMap;
 	char *m_pEntities;
 	int m_TileSize;
+	bool m_ShowBenchmark;
 	bool m_DumpTilemaps;
 	bool m_DumpGameTilemap;
 	bool m_DumpQuads;
@@ -37,11 +39,21 @@ struct CGenInfo
 	bool m_DumpMetadata;
 };
 
+struct CBenchmarkResults
+{
+	CBenchmark m_ImagesDumping;
+	CBenchmark m_TilemapsDumping;
+	CBenchmark m_QuadsDumping;
+	CBenchmark m_MetadataDumping;
+	CBenchmark m_Overall;
+};
+
 
 class CMapReader
 {
 private:
 	CDataFileReader m_Reader;
+	CBenchmarkResults m_Benchmark;
 
 public:
 	bool Open(CGenInfo *pInfo);

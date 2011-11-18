@@ -9,8 +9,8 @@
 
 void PrintHelp()
 {
-	printf("Use : tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize]\n");
-	printf("Example : tw-maps-gen ctf2 -d tg -e entities_race -s 32\n");
+	printf("Use : tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize] [-b]\n");
+	printf("Example : tw-maps-gen ctf2 -d tg -e entities_race -s 32 -b\n");
 }
 
 bool CheckTileSize(int Size)
@@ -30,6 +30,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	// set default parameters
 	pInfo->m_pEntities = (char *)"entities";
 	pInfo->m_TileSize = 16;
+	pInfo->m_ShowBenchmark = false;
 	pInfo->m_DumpTilemaps = true;
 	pInfo->m_DumpGameTilemap = true;
 	pInfo->m_DumpQuads = true;
@@ -40,7 +41,11 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 	{
 		if(argv[i][0] == '-')
 		{
-			if(strcmp(argv[i], "-d") == 0)
+			if(strcmp(argv[i], "-b") == 0)
+			{
+				pInfo->m_ShowBenchmark = true;
+			}
+			else if(strcmp(argv[i], "-d") == 0)
 			{
 				i++;
 				if(i >= argc)
