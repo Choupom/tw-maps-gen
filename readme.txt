@@ -1,4 +1,4 @@
-Copyright (c) 2011 Choupom
+Copyright (c) 2011-2012 Choupom
 
 
 This software is provided 'as-is', without any express or implied
