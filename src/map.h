@@ -25,9 +25,9 @@ inline void IntsToStr(const int *pInts, int Num, char *pStr)
 
 struct CGenInfo
 {
-	char *m_pCurrentDir;
-	char *m_pMap;
-	char *m_pEntities;
+	char m_aCurrentDir[256];
+	char m_aMap[256];
+	char m_aEntities[256];
 	int m_TileSize;
 	bool m_ShowBenchmark;
 	bool m_DumpTilemaps;

@@ -2,14 +2,21 @@
 #include <stdio.h> // printf()
 #include <string.h> // strcmp()
 
+#include "version.h"
 #include "system.h"
 #include "map.h"
 
 
+void PrintVersion()
+{
+	printf("tw-maps-gen version: %s\n", TWMAPSGEN_VERSION);
+	printf("Supported Teeworlds maps: from %s to %s\n", TWMAPSGEN_SUPPORT_OLDEST, TWMAPSGEN_SUPPORT_NEWEST);
+}
+
 void PrintHelp()
 {
-	printf("Use : tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize] [-b]\n");
-	printf("Example : tw-maps-gen ctf2 -d tg -e entities_race -s 32 -b\n");
+	printf("Use: tw-maps-gen map [-d tgqem] [-e entities] [-s tilesize] [-b]\n");
+	printf("Example: tw-maps-gen ctf2 -d tg -e entities_race -s 32 -b\n");
 }
 
 bool CheckTileSize(int Size)
@@ -17,17 +24,19 @@ bool CheckTileSize(int Size)
 	return Size == 1 || Size == 2 || Size == 4 || Size == 8 || Size == 16 || Size == 32 || Size == 64;
 }
 
-bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
+bool ParseArguments(int argc, char **argv, CGenInfo *pInfo, bool *pShowVersion)
 {
 	if(argc < 2)
 		return false;
 	
-	pInfo->m_pCurrentDir = argv[0];
-	ExtractDir(pInfo->m_pCurrentDir);
-	pInfo->m_pMap = 0;
+	*pShowVersion = false;
+	
+	sprintf(pInfo->m_aCurrentDir, "%s", argv[0]);
+	ExtractDir(pInfo->m_aCurrentDir);
+	pInfo->m_aMap[0] = 0;
 	
 	// set default parameters
-	pInfo->m_pEntities = (char *)"entities";
+	sprintf(pInfo->m_aEntities, "entities");
 	pInfo->m_TileSize = 16;
 	pInfo->m_ShowBenchmark = false;
 	pInfo->m_DumpTilemaps = true;
@@ -77,7 +86,7 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 				if(i >= argc)
 					return false;
 				else
-					pInfo->m_pEntities = argv[i];
+					sprintf(pInfo->m_aEntities, "%s", argv[i]);
 			}
 			else if(strcmp(argv[i], "-s") == 0)
 			{
@@ -87,45 +96,58 @@ bool ParseArguments(int argc, char **argv, CGenInfo *pInfo)
 				else
 					pInfo->m_TileSize = atoi(argv[i]);
 			}
+			else if(strcmp(argv[i], "-v") == 0)
+			{
+				*pShowVersion = true;
+				return true;
+			}
 			else
 				return false;
 		}
 		else
 		{
-			if(pInfo->m_pMap)
+			if(pInfo->m_aMap[0])
 				return false;
 			else
-				pInfo->m_pMap = argv[i];
+				sprintf(pInfo->m_aMap, "%s", argv[i]);
 		}
 	}
 	
-	if(!pInfo->m_pMap)
+	if(!pInfo->m_aMap[0])
 		return false;
 	
 	if(!CheckTileSize(pInfo->m_TileSize))
 		return false;
 	
-	RemoveExtension(pInfo->m_pMap, ".map");
-	RemoveExtension(pInfo->m_pEntities, ".png");
+	RemoveExtension(pInfo->m_aMap, ".map");
+	RemoveExtension(pInfo->m_aEntities, ".png");
 	
 	return true;
 }
 
 int main(int argc, char *argv[])
 {
+	bool ShowVersion;
 	CGenInfo Info;
-	bool Success = ParseArguments(argc, argv, &Info);
+	bool Success = ParseArguments(argc, argv, &Info, &ShowVersion);
+	
 	if(!Success)
 	{
 		PrintHelp();
 		return 1;
 	}
 	
+	if(ShowVersion)
+	{
+		PrintVersion();
+		return 0;
+	}
+	
 	CMapReader Reader;
 	Success = Reader.Open(&Info);
 	if(!Success)
 	{
-		printf("Couldn't load map \"%s\" from \"%smaps/\"\n", Info.m_pMap, Info.m_pCurrentDir);
+		printf("Couldn't load map \"%s\" from \"%smaps/\"\n", Info.m_aMap, Info.m_aCurrentDir);
 		return 1;
 	}
 	

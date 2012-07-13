@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -20,7 +19,7 @@ void CXMLAttribute::Save(FILE *pFile)
 
 	if(m_Type == XML_ATTRIBUTE_TYPE_INT)
 	{
-		itoa(((CXMLAttributeInt *)this)->m_Value, aBuf, 10);
+		sprintf(aBuf, "%d", ((CXMLAttributeInt *)this)->m_Value);
 	}
 	else if(m_Type == XML_ATTRIBUTE_TYPE_BOOL)
 	{
@@ -31,7 +30,7 @@ void CXMLAttribute::Save(FILE *pFile)
 	}
 	else if(m_Type == XML_ATTRIBUTE_TYPE_STR)
 	{
-		sprintf(aBuf, ((CXMLAttributeStr *)this)->m_pValue);
+		sprintf(aBuf, "%s", ((CXMLAttributeStr *)this)->m_pValue);
 	}
 
 	fwrite(aBuf, strlen(aBuf), 1, pFile);
@@ -81,7 +80,7 @@ void CXMLItem::AddAttributeBool(const char *pName, bool Value)
 	AddAttribute(pAttribute);
 }
 
-void CXMLItem::AddAttributeStr(const char *pName, char *pValue)
+void CXMLItem::AddAttributeStr(const char *pName, const char *pValue)
 {
 	CXMLAttributeStr *pAttribute = new CXMLAttributeStr;
 	pAttribute->m_pName = pName;
@@ -176,7 +175,7 @@ CXMLItem *CXMLDocument::Open(const char *pMainItemName)
 	return m_pMainItem;
 }
 
-void CXMLDocument::Save(char *pFilename)
+void CXMLDocument::Save(const char *pFilename)
 {
 	m_pFile = fopen(pFilename, "w");
 

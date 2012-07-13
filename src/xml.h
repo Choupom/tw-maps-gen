@@ -31,7 +31,7 @@ struct CXMLAttributeBool : public CXMLAttribute
 
 struct CXMLAttributeStr : public CXMLAttribute
 {
-	char *m_pValue;
+	const char *m_pValue;
 };
 
 
@@ -49,7 +49,7 @@ public:
 	void AddAttribute(CXMLAttribute *pAttribute);
 	void AddAttributeInt(const char *pName, int Value);
 	void AddAttributeBool(const char *pName, bool Value);
-	void AddAttributeStr(const char *pName, char *pValue);
+	void AddAttributeStr(const char *pName, const char *pValue);
 	CXMLItem *AddChild(const char *pName);
 	void Save(FILE *pFile, int Tabs);
 	void Close();
@@ -64,7 +64,7 @@ private:
 
 public:
 	CXMLItem *Open(const char *pMainItemName);
-	void Save(char *pFilename);
+	void Save(const char *pFilename);
 	void Close();
 };
 
